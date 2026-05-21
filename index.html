@@ -3,11 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paper Squeeze</title>
+    <title>Paper Squeeze — 本地 PDF、PPTX、DOCX 压缩工具</title>
     <meta
       name="description"
-      content="Cloudflare Pages 静态站。浏览器内使用 Web Worker + WASM/JSZip 本地压缩 PDF、PPTX 和 DOCX，文件全程不上传。"
+      content="免费的浏览器本地压缩工具。使用 Web Worker + WASM 在本地压缩 PDF、PPTX 和 DOCX，文件全程不上传服务器，保护隐私。"
     />
+    <meta name="keywords" content="PDF压缩,PPTX压缩,DOCX压缩,本地压缩,浏览器压缩,图片压缩,文档瘦身,在线压缩工具,隐私安全,不上传" />
+    <meta name="author" content="Paper Squeeze" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://officecompress.itea.fit/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Paper Squeeze — 本地 PDF、PPTX、DOCX 压缩工具" />
+    <meta property="og:description" content="免费的浏览器本地压缩工具。文件全程不上传服务器，保护隐私。支持 PDF、PPTX、DOCX 批量压缩。" />
+    <meta property="og:url" content="https://officecompress.itea.fit/" />
+    <meta property="og:site_name" content="Paper Squeeze" />
+    <meta property="og:locale" content="zh_CN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Paper Squeeze — 本地 PDF、PPTX、DOCX 压缩工具" />
+    <meta name="twitter:description" content="免费的浏览器本地压缩工具。文件全程不上传服务器，保护隐私。" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://officecompress.itea.fit" />
+
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -143,6 +166,34 @@
         </div>
       </li>
     </template>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Paper Squeeze",
+      "headline": "本地 PDF、PPTX、DOCX 压缩工具",
+      "description": "免费的浏览器本地压缩工具。使用 Web Worker + WASM 在本地压缩 PDF、PPTX 和 DOCX，文件全程不上传服务器，保护隐私。",
+      "url": "https://officecompress.itea.fit/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires modern browser with WebAssembly support.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      },
+      "featureList": [
+        "PDF 本地压缩",
+        "PPTX 图片重压缩",
+        "DOCX 图片重压缩",
+        "批量队列处理",
+        "文件不上传服务器"
+      ],
+      "inLanguage": "zh-CN"
+    }
+    </script>
 
     <script type="module" src="./app.js"></script>
   </body>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /dist/
+
+Sitemap: https://officecompress.itea.fit/sitemap.xml
