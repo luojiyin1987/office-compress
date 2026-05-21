@@ -1,5 +1,6 @@
 import { state, activeCompression, finishActiveCompression } from "./state.js";
 import { setEngineStatus, setStructureToggleEnabled, renderFiles } from "./render.js";
+import { t } from "./i18n.js";
 
 let worker;
 
@@ -50,22 +51,22 @@ export function handleWorkerMessage(event) {
 
 export function handleWorkerError(event) {
   console.error("Worker error:", event.message);
-  const message = event.message || "Worker 发生错误";
+  const message = event.message || t("workerError");
   finishActiveCompression({
     ok: false,
     id: activeCompression?.id,
-    error: `${message}，压缩引擎已重启。`,
+    error: t("engineRestartCause", { cause: message }),
     stopQueue: true,
   });
-  restartWorker(`${message}，压缩引擎已重启。`);
+  restartWorker(t("engineRestartCause", { cause: message }));
 }
 
 export function handleWorkerMessageError() {
   finishActiveCompression({
     ok: false,
     id: activeCompression?.id,
-    error: "Worker 消息通道错误，压缩引擎已重启。",
+    error: t("engineRestartCause", { cause: t("workerMsgError") }),
     stopQueue: true,
   });
-  restartWorker("Worker 消息通道错误，压缩引擎已重启。");
+  restartWorker(t("engineRestartCause", { cause: t("workerMsgError") }));
 }

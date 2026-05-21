@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paper Squeeze — 本地 PDF、PPTX、DOCX 压缩工具</title>
+    <title data-i18n="pageTitle">Paper Squeeze — 本地 PDF、PPTX、DOCX 压缩工具</title>
     <meta
       name="description"
       content="免费的浏览器本地压缩工具。使用 Web Worker + WASM 在本地压缩 PDF、PPTX 和 DOCX，文件全程不上传服务器，保护隐私。"
@@ -34,36 +34,41 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="lang-bar" id="lang-bar">
+      <button class="lang-btn" type="button" data-lang="zh">中文</button>
+      <button class="lang-btn" type="button" data-lang="en">English</button>
+    </div>
+
     <div class="page-shell">
       <header class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Cloudflare Pages / Local-Only Compression</p>
-          <h1>PDF、PPTX 和 DOCX 都在浏览器本地压缩。</h1>
-          <p class="hero-text">
+          <p class="eyebrow" data-i18n="eyebrow">Cloudflare Pages / Local-Only Compression</p>
+          <h1 data-i18n="heroTitle">PDF、PPTX 和 DOCX 都在浏览器本地压缩。</h1>
+          <p class="hero-text" data-i18n="heroText">
             浏览器直接读取文件，压缩流程放进 Web Worker。PDF 由 Ghostscript/QPDF WASM 处理，
             PPTX 和 DOCX 由 JSZip 解包并重压缩内嵌图片。
           </p>
           <div class="hero-pills">
-            <span>文档不上传</span>
-            <span>批量队列</span>
-            <span>Worker 隔离</span>
-            <span>QPDF 优化</span>
-            <span>PPTX 图片重压缩</span>
-            <span>DOCX 图片重压缩</span>
+            <span data-i18n="pillNoUpload">文档不上传</span>
+            <span data-i18n="pillBatch">批量队列</span>
+            <span data-i18n="pillWorker">Worker 隔离</span>
+            <span data-i18n="pillQpdf">QPDF 优化</span>
+            <span data-i18n="pillPptx">PPTX 图片重压缩</span>
+            <span data-i18n="pillDocx">DOCX 图片重压缩</span>
           </div>
         </div>
 
         <aside class="hero-panel">
-          <p class="panel-label">处理路径</p>
+          <p class="panel-label" data-i18n="panelLabel">处理路径</p>
           <ol class="pipeline">
-            <li>浏览器读取本地 PDF</li>
-            <li>Web Worker 接管任务</li>
-            <li>Ghostscript WASM 压缩</li>
-            <li>QPDF WASM 结构优化</li>
-            <li>JSZip 重写 Office 图片</li>
-            <li>浏览器生成下载文件</li>
+            <li data-i18n="pipeline_0">浏览器读取本地 PDF</li>
+            <li data-i18n="pipeline_1">Web Worker 接管任务</li>
+            <li data-i18n="pipeline_2">Ghostscript WASM 压缩</li>
+            <li data-i18n="pipeline_3">QPDF WASM 结构优化</li>
+            <li data-i18n="pipeline_4">JSZip 重写 Office 图片</li>
+            <li data-i18n="pipeline_5">浏览器生成下载文件</li>
           </ol>
-          <p class="panel-footnote">当前版本已接入 PDF 压缩、PDF 结构优化和 Office 图片重压缩。</p>
+          <p class="panel-footnote" data-i18n="panelFootnote">当前版本已接入 PDF 压缩、PDF 结构优化和 Office 图片重压缩。</p>
         </aside>
       </header>
 
@@ -71,13 +76,21 @@
         <section class="tool-card tool-card-primary">
           <div class="section-head">
             <div>
-              <p class="section-kicker">Local Compression</p>
-              <h2>PDF / PPTX / DOCX 压缩</h2>
+              <p class="section-kicker" data-i18n="toolKicker">Local Compression</p>
+              <h2 data-i18n="toolTitle">PDF / PPTX / DOCX 压缩</h2>
             </div>
             <span class="status-chip" id="engine-status">检测引擎中</span>
           </div>
 
-          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="选择 PDF、PPTX 或 DOCX 文件">
+          <div
+            class="dropzone"
+            id="dropzone"
+            tabindex="0"
+            role="button"
+            data-i18n="dropzoneLabel"
+            data-i18n-attr="aria-label"
+            aria-label="选择 PDF、PPTX 或 DOCX 文件"
+          >
             <input
               id="file-input"
               type="file"
@@ -85,26 +98,26 @@
               multiple
               hidden
             />
-            <p class="dropzone-title">拖入 PDF / PPTX / DOCX，或点这里选择文件</p>
-            <p class="dropzone-subtitle">支持批量加入队列。文件只在当前浏览器内处理。</p>
+            <p class="dropzone-title" data-i18n="dropzoneTitle">拖入 PDF / PPTX / DOCX，或点这里选择文件</p>
+            <p class="dropzone-subtitle" data-i18n="dropzoneSubtitle">支持批量加入队列。文件只在当前浏览器内处理。</p>
           </div>
 
           <div class="toolbar">
             <label class="field">
-              <span>压缩档位</span>
+              <span data-i18n="profileLabel">压缩档位</span>
               <select id="profile-select">
-                <option value="balanced">均衡</option>
-                <option value="strong">强力</option>
-                <option value="archive">原图</option>
+                <option value="balanced" data-i18n="profileBalanced">均衡</option>
+                <option value="strong" data-i18n="profileStrong">强力</option>
+                <option value="archive" data-i18n="profileArchive">原图</option>
               </select>
             </label>
 
             <label class="checkbox-field disabled-field">
               <input id="structure-toggle" type="checkbox" disabled />
-              <span>启用 PDF 结构优化（QPDF WASM）</span>
+              <span data-i18n="structureLabel">启用 PDF 结构优化（QPDF WASM）</span>
             </label>
 
-            <button class="primary-button" id="compress-button" type="button">
+            <button class="primary-button" id="compress-button" type="button" data-i18n="compressButton">
               开始压缩
             </button>
           </div>
@@ -120,32 +133,32 @@
         <section class="tool-card side-card">
           <div class="section-head">
             <div>
-              <p class="section-kicker">功能</p>
+              <p class="section-kicker" data-i18n="sideKicker">功能</p>
             </div>
           </div>
 
           <div class="future-list">
             <article class="future-item active">
-              <strong>PDF 压缩</strong>
-              <p>首屏主功能，已接入批量队列、Ghostscript WASM 和 QPDF WASM。</p>
+              <strong data-i18n="feature_pdf_title">PDF 压缩</strong>
+              <p data-i18n="feature_pdf_desc">首屏主功能，已接入批量队列、Ghostscript WASM 和 QPDF WASM。</p>
             </article>
             <article class="future-item active">
-              <strong>PPTX 压缩</strong>
-              <p>JSZip 解包 + 图片重压缩，再回写 ZIP。</p>
+              <strong data-i18n="feature_pptx_title">PPTX 压缩</strong>
+              <p data-i18n="feature_pptx_desc">JSZip 解包 + 图片重压缩，再回写 ZIP。</p>
             </article>
             <article class="future-item active">
-              <strong>DOCX 压缩</strong>
-              <p>沿用 Office Open XML 流程，优先处理嵌入图片。</p>
+              <strong data-i18n="feature_docx_title">DOCX 压缩</strong>
+              <p data-i18n="feature_docx_desc">沿用 Office Open XML 流程，优先处理嵌入图片。</p>
             </article>
             <article class="future-item">
-              <strong>批量压缩</strong>
-              <p>当前队列已支持多文件，后续补并行和失败重试。</p>
+              <strong data-i18n="feature_batch_title">批量压缩</strong>
+              <p data-i18n="feature_batch_desc">当前队列已支持多文件，后续补并行和失败重试。</p>
             </article>
           </div>
 
           <div class="privacy-note">
-            <p class="privacy-title">本地处理说明</p>
-            <p>
+            <p class="privacy-title" data-i18n="privacyTitle">本地处理说明</p>
+            <p data-i18n="privacyText">
               这个版本不会把文件上传到服务器。PDF 引擎和 Office 图片处理都在浏览器端 Worker 中运行。
             </p>
           </div>
@@ -162,7 +175,7 @@
         <div class="file-state">
           <span class="file-badge"></span>
           <span class="file-message"></span>
-          <button class="download-link" type="button" hidden>下载</button>
+          <button class="download-link" type="button" hidden data-i18n="downloadFile">下载文件</button>
         </div>
       </li>
     </template>

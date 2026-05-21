@@ -1,8 +1,10 @@
+import { t } from "./i18n.js";
+
 export const state = {
   files: [],
   isProcessing: false,
   engineReady: false,
-  engineMessage: "压缩引擎加载中",
+  engineMessage: t("engineLoading"),
 };
 
 export const dropzone = document.querySelector("#dropzone");

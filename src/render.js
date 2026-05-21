@@ -1,6 +1,7 @@
 import { fileKinds } from "./config.js";
 import { state, engineStatus, structureToggle, queueSummary, fileList, compressButton, rowTemplate } from "./state.js";
 import { formatBytes, getKindConfig, getItemById, canProcessItem, createClearedResultPatch, createFailedItemPatch, isBinaryOutput, isOfficeKind } from "./utils.js";
+import { t } from "./i18n.js";
 
 export const setEngineStatus = (label, tone = "") => {
   engineStatus.textContent = label;
@@ -17,16 +18,19 @@ export const setStructureToggleEnabled = (enabled) => {
 
 export const updateSummary = () => {
   const totalBytes = state.files.reduce((sum, item) => sum + item.file.size, 0);
-  queueSummary.innerHTML = `
-    <span>${state.files.length} 个文件</span>
-    <span>总计 ${formatBytes(totalBytes)}</span>
-  `;
+  queueSummary.innerHTML = "";
+  const spanCount = document.createElement("span");
+  spanCount.textContent = t("summaryFiles", { count: state.files.length });
+  const spanTotal = document.createElement("span");
+  spanTotal.textContent = t("summaryTotal", { size: formatBytes(totalBytes) });
+  queueSummary.appendChild(spanCount);
+  queueSummary.appendChild(spanTotal);
 };
 
 export const renderEmptyState = () => {
   const emptyRow = document.createElement("li");
   emptyRow.className = "empty-row";
-  emptyRow.textContent = "队列为空。当前接受 PDF、PPTX 和 DOCX 文件，支持一次加入多个文件。";
+  emptyRow.textContent = t("emptyState");
   fileList.appendChild(emptyRow);
 };
 
@@ -50,7 +54,7 @@ export const renderItem = (item) => {
   if (item.tone === "success" && item.outputBlob) {
     download.hidden = false;
     download.dataset.fileId = item.id;
-    download.textContent = "下载文件";
+    download.textContent = t("downloadFile");
   }
 
   row.dataset.fileId = item.id;
@@ -81,20 +85,34 @@ export const markItem = (id, patch) => {
 };
 
 export const buildProcessingMessage = (item, profile, optimizeStructure, currentIndex, totalCount) => {
+  const profileLabel = t(`profile${profile.charAt(0).toUpperCase() + profile.slice(1)}`);
   if (isOfficeKind(item.kind)) {
-    return `JSZip 正在解包 ${item.kind.toUpperCase()}（${currentIndex}/${totalCount}），并按 ${profile} 档位重压缩图片。`;
+    return t("processingOffice", {
+      kind: item.kind.toUpperCase(),
+      current: currentIndex,
+      total: totalCount,
+      profile: profileLabel,
+    });
   }
 
   if (optimizeStructure) {
-    return `Ghostscript 压缩后将执行 QPDF 结构优化（${currentIndex}/${totalCount}），使用 ${profile} 档位。`;
+    return t("processingPdfOptimized", {
+      current: currentIndex,
+      total: totalCount,
+      profile: profileLabel,
+    });
   }
 
-  return `Ghostscript WASM 正在处理（${currentIndex}/${totalCount}），使用 ${profile} 档位。`;
+  return t("processingPdf", {
+    current: currentIndex,
+    total: totalCount,
+    profile: profileLabel,
+  });
 };
 
 export const markItemPreparing = (item, profile, optimizeStructure, currentIndex, totalCount) => {
   markItem(item.id, {
-    statusLabel: "压缩中",
+    statusLabel: t("statusCompressing"),
     tone: "processing",
     message: buildProcessingMessage(item, profile, optimizeStructure, currentIndex, totalCount),
     ...createClearedResultPatch(),
@@ -103,7 +121,7 @@ export const markItemPreparing = (item, profile, optimizeStructure, currentIndex
 
 export const markItemSuccess = (item, result) => {
   if (!isBinaryOutput(result.buffer)) {
-    markItem(item.id, createFailedItemPatch("压缩结果无效，未收到可保存的输出文件。"));
+    markItem(item.id, createFailedItemPatch(t("invalidResult")));
     return;
   }
 
@@ -112,7 +130,7 @@ export const markItemSuccess = (item, result) => {
   });
 
   markItem(item.id, {
-    statusLabel: "已完成",
+    statusLabel: t("statusCompleted"),
     tone: "success",
     message: result.message,
     resultBytes: blob.size,

@@ -3,6 +3,7 @@ import { state, activeCompression, finishActiveCompression, setActiveCompression
 import { getKindConfig, clearOutput, createClearedResultPatch, createFailedItemPatch } from "./utils.js";
 import { renderFiles, markItem, markItemPreparing, markItemSuccess } from "./render.js";
 import { getWorker, restartWorker } from "./worker.js";
+import { t } from "./i18n.js";
 
 export const compressFile = (item, profile, optimizeStructure) =>
   new Promise((resolve) => {
@@ -10,7 +11,7 @@ export const compressFile = (item, profile, optimizeStructure) =>
       resolve({
         ok: false,
         id: item.id,
-        error: "已有压缩任务正在运行，请稍后重试。",
+        error: t("errorBusy"),
       });
       return;
     }
@@ -46,10 +47,10 @@ export const compressFile = (item, profile, optimizeStructure) =>
       doResolve({
         ok: false,
         id: item.id,
-        error: "压缩任务超时，请重试或降低档位。",
+        error: t("errorTimeout"),
         stopQueue: true,
       });
-      restartWorker("压缩任务超时，压缩引擎已重启。");
+      restartWorker(t("errorTimeout") + t("engineRestarted"));
     }, compressionTimeoutMs);
 
     channel.port1.onmessage = (event) => {
@@ -60,7 +61,7 @@ export const compressFile = (item, profile, optimizeStructure) =>
       doResolve({
         ok: false,
         id: item.id,
-        error: "Worker 消息通道错误，数据无法解析。",
+        error: t("errorMsgChannel"),
       });
     };
 
@@ -88,7 +89,7 @@ export const compressFile = (item, profile, optimizeStructure) =>
           doResolve({
             ok: false,
             id: item.id,
-            error: error instanceof Error ? error.message : "Worker 通信失败。",
+            error: error instanceof Error ? error.message : t("errorPostFailed"),
           });
         }
       })
@@ -96,7 +97,7 @@ export const compressFile = (item, profile, optimizeStructure) =>
         doResolve({
           ok: false,
           id: item.id,
-          error: error instanceof Error ? error.message : "读取文件失败。",
+          error: error instanceof Error ? error.message : t("errorReadFailed"),
         });
       });
   });
@@ -112,7 +113,7 @@ export const processQueue = async ({ profile, optimizeStructure }) => {
     clearOutput(item);
 
     if (item.kind === "pdf" && !state.engineReady) {
-      markItem(item.id, createFailedItemPatch(state.engineMessage || "PDF 压缩引擎未就绪。"));
+      markItem(item.id, createFailedItemPatch(state.engineMessage || t("engineNotReady")));
       continue;
     }
 

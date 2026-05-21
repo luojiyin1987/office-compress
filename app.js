@@ -4,6 +4,7 @@ import { renderFiles, markItem } from "./src/render.js";
 import { saveBlob } from "./src/download.js";
 import { createWorker, probeWorker } from "./src/worker.js";
 import { processQueue } from "./src/queue.js";
+import { initLanguage, setLanguage, getLanguage, t } from "./src/i18n.js";
 
 const addFiles = (incomingFiles) => {
   incomingFiles
@@ -47,13 +48,13 @@ const handleDownloadClick = async (event) => {
 
   const previousMessage = item.message;
   markItem(item.id, {
-    message: "正在写入下载文件...",
+    message: t("saving"),
   });
 
   try {
     await saveBlob(item);
     markItem(item.id, {
-      message: "文件已保存到本地。",
+      message: t("saved"),
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
@@ -64,7 +65,7 @@ const handleDownloadClick = async (event) => {
     }
 
     markItem(item.id, {
-      message: `保存失败：${error instanceof Error ? error.message : "浏览器拒绝写入文件。"}`,
+      message: `${t("saveFailedPrefix")}${error instanceof Error ? error.message : t("saveDenied")}`,
     });
   }
 };
@@ -108,11 +109,36 @@ const bindFileInputEvents = () => {
   });
 };
 
+const updateLangButtons = () => {
+  const lang = getLanguage();
+  document.querySelectorAll("#lang-bar .lang-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+  });
+};
+
+const bindLangSwitcher = () => {
+  document.querySelectorAll("#lang-bar .lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const lang = btn.dataset.lang;
+      if (!lang) return;
+      setLanguage(lang);
+      updateLangButtons();
+      state.engineMessage = t("engineLoading");
+      renderFiles();
+    });
+  });
+};
+
 const init = () => {
+  initLanguage();
   bindDropzoneEvents();
   bindFileInputEvents();
+  bindLangSwitcher();
   compressButton.addEventListener("click", handleCompressClick);
   fileList.addEventListener("click", handleDownloadClick);
+
+  updateLangButtons();
+  state.engineMessage = t("engineLoading");
 
   createWorker();
   probeWorker();

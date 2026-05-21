@@ -1,5 +1,6 @@
 import { fileKinds } from "./config.js";
 import { state } from "./state.js";
+import { t } from "./i18n.js";
 
 export const formatBytes = (bytes) => {
   if (!Number.isFinite(bytes) || bytes <= 0) {
@@ -37,9 +38,9 @@ export const createItem = (file) => ({
   id: crypto.randomUUID(),
   file,
   kind: getFileKind(file),
-  statusLabel: "待处理",
+  statusLabel: t("statusPending"),
   tone: "",
-  message: "已加入队列，等待开始。",
+  message: t("messageQueued"),
   outputBlob: null,
   outputName: "",
   resultBytes: 0,
